@@ -10,6 +10,8 @@ white = 255, 255, 255 # rgb of white color
 red = 255, 0, 0 # rgb of red color
 green = 0, 255, 0 # rgb of green color
 blue = 0, 0, 255 # rgb of blue color
+number_of_integration_steps = 5000 # number of steps which integration function will make
+picture_filename = 'drawing.npy' # name of numpy file where numpy array of picture's points is stored
 functionY = []
 
 class Circle:     # class for circle objects
@@ -69,14 +71,14 @@ def integrate(f, a, b, n):
 def generate_circles(n):
     res = []
     c = {}
-    convert_pic_to_complex_function('drawing.npy')
+    convert_pic_to_complex_function(picture_filename)
     for i in range(0, n):
         c[i] = integrate(lambda t:
                 f(t) * cmath.exp(complex(0, -2 * pi * i * t)),
-                0, 1, max(2 * len(functionY), 5000))
+                0, 1, max(2 * len(functionY), number_of_integration_steps))
         c[-i] = integrate(lambda t:
                 f(t) * cmath.exp(complex(0, -2 * pi * -i * t)),
-                0, 1, max(2 * len(functionY), 5000))
+                0, 1, max(2 * len(functionY), number_of_integration_steps))
     for i in range(0, n):
         res.append(Circle(x=0.0, y=0.0, r=abs(c[i]), k=i,
                                         angle=cmath.phase(c[i])))
@@ -102,7 +104,7 @@ def main(n=50):
             prev = objects[i].get_coordinates_of_point()
         curve.append((prev[0], prev[1]))
         if len(curve) > 1400:
-            curve.pop()
+            curve.pop(0)
         if len(curve) > 1:
             pygame.draw.lines(screen, red, False, curve, 1)
         for object in objects:
@@ -118,4 +120,4 @@ def main(n=50):
 
 
 if __name__ == "__main__":
-    main()
+    main(100)
